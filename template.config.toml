@@ -1,0 +1,20 @@
+
+[tile]
+username = "user@email.com"    # Tile's login.
+password = "strong password"   # Tile's password.
+include = []                   # List of uuid or name of Tile(s) to include. Ignored if empty.
+exclude = []                   # List of uuid or name of Tile(s) to exclude. Ignored if empty.
+
+# Create org, bucket & token by navigating to your influx url from a browser
+[influx]
+url = "http://localhost:8086"  # Location of influxdb v2 server
+bucket = "Life360"             # Name of available bucket
+token = "super-secret-token"   # Token with write permission to bucket
+org = "your org in influx"     # Org of the bucket
+measurement = "location"       # Name to give to measurements
+no_op = false                  # Set to true for testing, in which case connection is tested but records are not imported
+
+[main]
+log_verbosity = "INFO" # By increasing level of verbosity = FATAL, ERROR, WARNING, INFO, DEBUG.
+loop_seconds  = 180    # Time to wait between two queries to Tile's backend. 0 to only query once
+
