@@ -24,7 +24,7 @@ class InfluxConnector:
         logging.debug(records)
 
         if self.no_op:
-            logging.warn("No-op mode, records not imported.")
+            logging.warning("No-op mode, records not imported.")
             return
 
         with self.__get_client() as client:

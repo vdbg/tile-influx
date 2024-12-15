@@ -15,7 +15,30 @@ Allows for importing data from [Tile](https://www.tile.com/) to [InfluxDB](https
 
 ## Setup
 
-### With Docker
+The app reads the settings from `template.config.toml`, then `config.toml` (if it exists), then environment variables.
+See `template.config.toml` for details.
+
+### With Docker without config file
+
+Dependency: Docker installed.
+
+Inspect `template.config.toml` file for all the settings that need to be overriden. Command will look something like:
+
+```
+sudo docker run \
+  -d \
+  --name tile-influx \
+  --memory=100m \
+  --pull=always \
+  --restart=always \
+  -e TILE_INFLUX_TILE_USERNAME=user \
+  -e TILE_INFLUX_TILE_PASSWORD=password \
+  -e TILE_INFLUX_INFLUX_TOKEN=token \
+  vdbg/tile-influx:latest
+```
+
+
+### With Docker using config file
 
 Dependency: Docker installed.
 

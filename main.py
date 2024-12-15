@@ -7,31 +7,12 @@ import time
 import tomllib
 import logging
 
+from config import Config
 from influx import InfluxConnector
 from tile import TileConnector
 from pathlib import Path
 
 logging.basicConfig(format="%(asctime)s - %(levelname)s - %(message)s", level=logging.INFO)
-
-
-def get_config():
-    CONFIG_FILE = "config.toml"
-    try:
-        with open(Path(__file__).with_name(CONFIG_FILE), "rb") as config_file:
-            config = tomllib.load(config_file)
-
-            if not config:
-                raise ValueError(f"Invalid {CONFIG_FILE}. See template.{CONFIG_FILE}.")
-
-            for name in {"influx", "tile", "main"}:
-                if name not in config:
-                    raise ValueError(f"Invalid {CONFIG_FILE}: missing section {name}.")
-
-            return config
-    except FileNotFoundError as e:
-        logging.error(f"Missing {e.filename}.")
-        exit(2)
-
 
 SUPPORTED_PYTHON_MAJOR = 3
 SUPPORTED_PYTHON_MINOR = 11
@@ -41,7 +22,7 @@ if sys.version_info < (SUPPORTED_PYTHON_MAJOR, SUPPORTED_PYTHON_MINOR):
 
 
 try:
-    config = get_config()
+    config = Config("config.toml", "tile_influx").load()
 
     main_conf = config["main"]
     logging.getLogger().setLevel(logging.getLevelName(main_conf["log_verbosity"]))
