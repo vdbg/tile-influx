@@ -1,9 +1,17 @@
+# This template file should be left untouched
+# The app will in order:
+# 1. Read this file (template.config.toml)
+# 2. Overwrite the settings with those in file config.toml (it it exists)
+# 3. Overwrite the settings with environment variables called "TILE_INFLUX_<SECTION>_<KEY>" (with section and key uppercase), if these exist.
+#    For example, set the env var TILE_INFLUX_MAIN_LOGVERBOSITY to DEBUG to overwrite the log verbosity
+
 
 [tile]
 username = "user@email.com"    # Tile's login.
 password = "strong password"   # Tile's password.
 include = []                   # List of uuid or name of Tile(s) to include. Ignored if empty.
 exclude = []                   # List of uuid or name of Tile(s) to exclude. Ignored if empty.
+warn_if_older_days = 3         # Warn (once) if this tile has no records newer than this amount of days
 
 # Create org, bucket & token by navigating to your influx url from a browser
 [influx]

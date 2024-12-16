@@ -1,4 +1,5 @@
 from asyncio.proactor_events import _ProactorBasePipeTransport
+from datetime import datetime
 from functools import wraps
 from aiohttp import ClientSession
 
@@ -34,7 +35,9 @@ class TileConnector:
         self.password: str = tile_conf["password"]
         self.include: set[str] = set(tile_conf["include"])
         self.exclude: set[str] = set(tile_conf["exclude"])
+        self.warn_if_older_days = int(tile_conf["warn_if_older_days"])
         self.tiles: list[Tile] = list()
+        self.last_update: dict[str, datetime] = dict()
 
     def __get_name(self, tile: Tile) -> str:
         return f"'{tile.name}' ({tile.uuid})"
@@ -77,10 +80,20 @@ class TileConnector:
         records = []
         for tile in self.tiles:
             if not tile.latitude or not tile.longitude or not tile.last_timestamp:
-                logging.warn(f"Tile {self.__get_name(tile)} missing location or time.")
+                logging.warning(f"Tile {self.__get_name(tile)} missing location or time.")
                 continue
             # Remove the millisecond precision, given that the measures aren't precise anyway
             time = tile.last_timestamp.replace(microsecond=0)
+
+            if tile.uuid not in self.last_update:
+                self.last_update[tile.uuid] = time
+                days_diff = (datetime.now()-time).days
+                if days_diff >= self.warn_if_older_days:
+                    logging.warning(f"Tile {tile.name}, {tile.uuid} was last updated {days_diff} day(s) ago.")
+            else:
+                if self.last_update[tile.uuid] == time:
+                    continue # no need to re-import the same record if no changes
+                self.last_update[tile.uuid] = time
 
             records.append(
                 {
